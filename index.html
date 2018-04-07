@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>RPS Multiplayer</title>
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+<div class="jumbotron">
+<h1 class="text-center">Welcome to Rock, Paper, Scissors</h1>
+<h2 class="text-center">Player 1: <span id=player1Name></span> Player 2: <span id="player2Name"></span></h2>
+</div>
+<div class="row">
+	<div class = "col-sm-6">
+		<div class="panel panel-default">
+			<div class = "panel-body">
+				<div class="row">
+					<div class="col-sm-6">
+						<button id="rockButton" class="btn btn-default choiceButton" data-choice="R">ROCK</button>
+						<button id="paperButton" class="btn btn-default choiceButton" data-choice="P">PAPER</button>
+						<button id="scissorsButton" class="btn btn-default choiceButton" data-choice="S">SCISSORS</button>
+					</div>
+					<div class="col-sm-6">
+						<p>Wins: <span id="wins"></span></p>
+						<p>Losses: <span id="losses"></span></p>
+						<p>Ties: <span id = "ties"></span></p>
+					</div>
+				</div>
+			</div>
+
+			
+	</div>
+</div>
+<div class="col-sm-6">
+	<div class="panel panel-default">
+		<div class ="panel-body">
+				<textarea id="chatWindow" rows="10" cols="70" readonly></textarea>
+				<!-- <div id="chatWindow" class="well well-lg"></div> -->
+				<form>
+					<label for="chatMessage">Message: </label>
+					<input class="form-control" id="chatMessage" type="text">
+					<button class="btn btn-default" id="submitMessage" type="button">Submit</button>
+				</form>
+			</div>
+	</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script src="assets/javascript/app.js"></script>
+
+</body>
+</html>
