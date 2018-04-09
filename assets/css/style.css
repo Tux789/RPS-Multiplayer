@@ -1,3 +1,6 @@
 #chatWindow{
 	overflow: scroll;
 }
+.text-center{
+	/*text-align: left;*/
+}

@@ -7,6 +7,12 @@ var messages = [];
 var ties = 0;
 var wins = 0;
 var losses =0;
+var playerOneWins = 0;
+var playerOneLosses = 0;
+var playerOneTies = 0;
+var playerTwoWins = 0;
+var playerTwoLosses = 0;
+var playerTwoTies = 0;
 
 
 var config = {
@@ -37,6 +43,7 @@ var config = {
   	playerPosition = JSON.parse(sessionStorage.getItem("RPSplayerPosition"));
   	playerName = JSON.parse(sessionStorage.getItem("RPSplayerName"));
   }else{
+    //start new session/game
   	playerName = prompt("User Name?");
   	var numPlayersJoined = snapshot.val().numPlayersJoined;
   	gameID = snapshot.val().gameID;
@@ -98,6 +105,11 @@ function updateChatWindow(){
 	}
 	$("#chatWindow").text(messageStr);
 }
+function setScore(key,value){  
+    var updates = {};
+    updates[key] = value;
+    database.ref("GameData/" + gameID + "/score").update(updates);  
+}
 
 
 //Chat Button Clicked
@@ -131,6 +143,33 @@ database.ref("GameData/" + gameID).on("value",function(snapshot){
 	
 });
 
+database.ref("GameData/" + gameID + "/score").on("value",function(snapshot){
+   if(snapshot.child("playerOneWins").exists()){
+  playerOneWins = snapshot.val().playerOneWins;
+  }
+  $("#player1Wins").text(playerOneWins);
+  if(snapshot.child("playerOneLosses").exists()){
+  playerOneLosses = snapshot.val().playerOneLosses;
+  }
+  $("#player1Losses").text(playerOneLosses);
+  if(snapshot.child("playerOneTies").exists()){
+  playerOneTies = snapshot.val().playerOneTies;
+  }
+  $("#player1Ties").text(playerOneTies);
+  if(snapshot.child("playerTwoWins").exists()){
+    playerTwoWins = snapshot.val().playerTwoWins;
+  }
+  $("#player2Wins").text(playerTwoWins);
+  if(snapshot.child("playerTwoLosses").exists()){
+    playerTwoLosses = snapshot.val().playerTwoLosses;
+  }
+  $("#player2Losses").text(playerTwoLosses);
+  if(snapshot.child("playerTwoTies").exists()){
+    playerTwoTies = snapshot.val().playerTwoTies;
+  }
+  $("#player2Ties").text(playerTwoTies);
+});
+
 //Get player's choice and update database
 $(document).on("click",".choiceButton",function(){
   playerChoice = $(this).attr("data-choice");
@@ -155,24 +194,95 @@ database.ref("GameData/"+gameID+"/choices").on("value",function(snapshot){
 			}
 		}
 });
-function updateScore(){
+function updateScore(winner){
   sessionStorage.setItem("RPSWins",wins);
   sessionStorage.setItem("RPSLosses",losses);
   sessionStorage.setItem("RPSTies",ties);
   $("#wins").text(wins);
   $("#losses").text(losses);
   $("#ties").text(ties);
-}
 
+
+  $("#p1WinText").empty();
+  $("#p1LossText").empty();
+  $("#p1TieText").empty();
+  $("#p2WinText").empty();
+  $("#p2LossText").empty();
+  $("#p2TieText").empty();
+
+  $("#p1ScoreText").empty();
+  $("#p2ScoreText").empty();
+
+
+  if(winner === "p1"){
+    // $("#p1WinText").text(" *WINNER*");
+    // $("#p2LossText").text(" *LOSE*");
+
+    $("#p1ScoreText").text(" *WINNER*");
+    $("#p2ScoreText").text(" *LOSE*");
+  }
+  if(winner === "p2"){
+    // $("#p1LossText").text(" *LOSE*");
+    // $("#p2WinText").text(" *WINNER*");
+
+    $("#p1ScoreText").text(" *LOSE*");
+    $("#p2ScoreText").text(" *WINNER*");
+  }
+  if(winner === "tie"){
+    // $("#p1TieText").text(" *TIE*");
+    // $("#p2TieText").text(" *TIE*");
+
+    $("#p1ScoreText").text(" *TIE*");
+    $("#p2ScoreText").text(" *TIE*");
+  }
+}
+function displayChoices(p1Choice, p2Choice){
+var p1ChoiceText = "";
+var p2ChoiceText = "";
+console.log(p1Choice +" " + p2Choice);
+switch(p1Choice){
+  case 'R':
+    p1ChoiceText = "Rock";
+    break;
+  case 'P':
+    p1ChoiceText = "Paper";
+    break;
+  case 'S':
+    p1ChoiceText = "Scissors";
+    break;
+}
+  switch(p2Choice){
+    case 'R':
+      p2ChoiceText = "Rock";
+      break;
+    case 'P':
+      p2ChoiceText = "Paper";
+      break;
+    case 'S':
+      p2ChoiceText = "Scissors";
+      break;
+  }
+  $("#playerlChoice").text(p1ChoiceText);
+  $("#player2Choice").text(p2ChoiceText);
+}
+ 
 
 function evaluate(p1Choice, p2Choice){
+  displayChoices(p1Choice,p2Choice);
 	database.ref("GameData/"+gameID+"/choices").set({
 		playerOneChoice: "null",
 		playerTwoChoice: "null",
 	});
 	if(p1Choice === p2Choice){
 		ties++;
-    updateScore();
+    if(playerPosition === 1){
+      playerOneTies++;
+      setScore("playerOneTies",playerOneTies);
+    }else{
+      playerTwoTies++;
+      setScore("playerTwoTies",playerTwoTies);
+    }
+    updateScore("tie");
     console.log(ties);
 		
 	}
@@ -183,11 +293,15 @@ function evaluate(p1Choice, p2Choice){
       //if r/p p1
 			if(playerPosition === 1){
 				losses++;
-        updateScore();
+        playerOneLosses++;
+        setScore("playerOneLosses",playerOneLosses);
+        updateScore("p2");
       //if r/p p2
 			}else{
         wins++;
-        updateScore();
+        playerTwoWins++;
+        setScore("playerTwoWins",playerTwoWins);
+        updateScore("p2");
       }
 		}
     // if r/s 
@@ -195,11 +309,15 @@ function evaluate(p1Choice, p2Choice){
       if(playerPosition === 1){
       //if r/s p1
         wins++;
-        updateScore();
+        playerOneWins++;
+        setScore("playerOneWins",playerOneWins);
+        updateScore("p1");
       //if r/s p2
       }else{
         losses++;
-        updateScore();
+        playerTwoLosses++;
+        setScore("playerTwoLosses",playerTwoLosses);
+        updateScore("p1");
       }
     }
 	}// end p1 = r
@@ -211,11 +329,15 @@ function evaluate(p1Choice, p2Choice){
       //if p/r p1
       if(playerPosition === 1){
         wins++;
-        updateScore();
+        playerOneWins++
+        setScore("playerOneWins",playerOneWins);
+        updateScore("p1");
       //if p/r p2
       }else{
         losses++;
-        updateScore();
+        playerTwoLosses++;
+        setScore("playerTwoLosses",playerTwoLosses);
+        updateScore("p1");
       }
     }
     //if p/s
@@ -223,11 +345,15 @@ function evaluate(p1Choice, p2Choice){
       //if p/s p1
       if(playerPosition === 1){
         losses++;
-        updateScore();
+        playerOneLosses++;
+        setScore("playerOneLosses",playerOneLosses);
+        updateScore("p2");
       //if p/s p2
       }else{
         wins++;
-        updateScore();
+        playerTwoWins++;
+        setScore("playerTwoWins",playerTwoWins);
+        updateScore("p2");
       }
     }
   } //end p1 = p
@@ -239,27 +365,35 @@ function evaluate(p1Choice, p2Choice){
       // if s/r p1
       if(playerPosition === 1){
         losses++;
-        updateScore();
+        playerOneLosses++;
+        setScore("playerOneLosses",playerOneLosses);
+        updateScore("p2");
       //if s/r p2
       }else{
         wins++;
-        updateScore();
+        playerTwoWins++;
+        setScore("playerTwoWins",playerTwoWins);
+        updateScore("p2");
       }
     }
     //if s/p
     if(p2Choice === "P"){
       if(playerPosition === 1){
         wins++;
-        updateScore();
+        playerOneWins++;
+        setScore("playerOneWins",playerOneWins);
+        updateScore("p1");
       }else{
         losses++;
-        updateScore();
+        playerTwoLosses++;
+        setScore("playerTwoLosses",playerTwoLosses);
+        updateScore("p1");
       }
 
     }// end p1 = s
   }
 }// end evaluate
 initializeGame();
-updateScore();
+updateScore("");
 
 //DESTROYEVERYTHING();

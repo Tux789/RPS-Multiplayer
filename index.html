@@ -3,27 +3,50 @@
 <head>
 	<title>RPS Multiplayer</title>
 	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 <div class="container">
 <div class="jumbotron">
 <h1 class="text-center">Welcome to Rock, Paper, Scissors</h1>
-<h2 class="text-center">Player 1: <span id=player1Name></span> Player 2: <span id="player2Name"></span></h2>
+<div class = "row">
+<div class = "col-md-6">
+<h2><!-- Player 1: --> <span id=player1Name></span><span id="p1ScoreText"></span></h2>
+</div>
+<div class="col-md-6">
+<h2><!-- Player 2: --> <span id="player2Name"></span><span id="p2ScoreText"></span></h2>
+</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<h2 id="playerlChoice"></h2>
+	</div>
+	<div class="col-md-6">
+		<h2 id="player2Choice"></h2>
+	</div>
+</div>
+<div class = "row">
+	<div class="col-md-6">
+		<h3>Wins: <span id="player1Wins"></span><span id="p1WinText"></span></h3>
+		<h3>Losses: <span id="player1Losses"></span><span id="p1LossText"></span></h3>
+		<h3>Ties: <span id="player1Ties"></span><span id="p1TieText"></span></h3>
+	</div>
+	<div class="col-md-6">
+		<h3>Wins: <span id="player2Wins"></span><span id="p2WinText"></span></h3>
+		<h3>Losses: <span id="player2Losses"></span><span id="p2LossText"></span></h3>
+		<h3>Ties: <span id="player2Ties"></span><span id="p2TieText"></span></h3>
+	</div>
+</div>
 </div>
 <div class="row">
 	<div class = "col-sm-6">
 		<div class="panel panel-default">
 			<div class = "panel-body">
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-12">
 						<button id="rockButton" class="btn btn-default choiceButton" data-choice="R">ROCK</button>
 						<button id="paperButton" class="btn btn-default choiceButton" data-choice="P">PAPER</button>
 						<button id="scissorsButton" class="btn btn-default choiceButton" data-choice="S">SCISSORS</button>
-					</div>
-					<div class="col-sm-6">
-						<p>Wins: <span id="wins"></span></p>
-						<p>Losses: <span id="losses"></span></p>
-						<p>Ties: <span id = "ties"></span></p>
 					</div>
 				</div>
 			</div>
